@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 #编译后执行? 
-set(EXECUTE OFF)
+set(EXECUTE ON)
 
 #vcpkg安装路径
 #SET(CMAKE_TOOLCHAIN_FILE "/home/zhao/software/vcpkg/scripts/buildsystems/vcpkg.cmake")
@@ -82,33 +82,8 @@ message("根项目的输出路径: ${CMAKE_CURRENT_BINARY_DIR}")
 message("Boost库目录: ${Boost_LIBRARIES}")
 message("Boost库版本: ${Boost_VERSION}")
 
-
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-if (${EXECUTE})
-add_custom_command(
-  TARGET
-  ${PROJECTNAME}
-  POST_BUILD
-  COMMAND
-  ./${PROJECTNAME}
-  WORKING_DIRECTORY
-  ${CMAKE_CURRENT_BINARY_DIR}
-  COMMENT
-  "开始执行程序..."
-)
+if (EXECUTE)
+add_custom_command(TARGET ${PROJECTNAME} POST_BUILD COMMAND ${PROJECTNAME} COMMENT ".....开始执行程序.....")
+add_custom_target(run ${PROJECTNAME})
 endif()
 
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-add_custom_command(
-TARGET
-${PROJECTNAME}
-POST_BUILD
-COMMAND
-./${PROJECTNAME}
-WORKING_DIRECTORY
-${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}
-COMMENT
-"开始执行程序..."
-)
-endif()
