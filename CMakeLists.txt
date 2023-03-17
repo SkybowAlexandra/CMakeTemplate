@@ -5,7 +5,8 @@ cmake_minimum_required(VERSION 3.0)
 set(EXECUTE ON)
 
 #vcpkg安装路径
-#SET(CMAKE_TOOLCHAIN_FILE "/home/zhao/software/vcpkg/scripts/buildsystems/vcpkg.cmake")
+SET(CMAKE_TOOLCHAIN_FILE "F:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+
 #设置C++标准
 set(CMAKE_CXX_STANDARD 20)
 #检查编译器是否支持设置的标准
@@ -32,7 +33,7 @@ endif()
 SET(PROJECTNAME "main")
 
 #设置输出文件为debug版本
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 #未设置CMAKE_BUILD_TYPE自动设置为Release
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -67,6 +68,24 @@ file(GLOB_RECURSE source
 add_executable(${PROJECTNAME} ${source})
 #头文件目录
 target_include_directories(${PROJECTNAME} PUBLIC "include")
+
+
+if (CMAKE_TOOLCHAIN_FILE)
+#boost库支持
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_STATIC_RUNTIME ON)
+set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-windows/include)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+find_package(Boost COMPONENTS system locale thread REQUIRED)#添加需要的包
+if (Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARY_DIRS})
+endif ()
+target_link_libraries(${PROJECTNAME} PRIVATE ${Boost_LIBRARIES})
+else()
+message("Vcpkg路径未指定")
+endif()
+
 
 #输出构建信息
 message("项目版本: ${PROJECT_VERSION}")
