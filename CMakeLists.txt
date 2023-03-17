@@ -43,7 +43,7 @@ if (WIN32)
     add_definitions(-DNOMINMAX -D_USE_MATH_DEFINES)
 endif()
 #开启ccache windows编译缓存
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     message("MSCV 编译器")
     find_program(CCACHE_PROGRAM ccache)
     if (CCACHE_PROGRAM)
@@ -54,7 +54,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 #设置GCC 编译器选项
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
 message("G++ 编译器")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
@@ -74,7 +74,14 @@ if (CMAKE_TOOLCHAIN_FILE)
 #boost库支持
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME ON)
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-windows/include)
+endif()
+if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
+set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/include)
+endif()
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 find_package(Boost COMPONENTS system locale thread REQUIRED)#添加需要的包
 if (Boost_FOUND)
