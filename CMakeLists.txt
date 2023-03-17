@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 #编译后执行? 
-set(EXECUTE ON)
+set(EXECUTE OFF)
 
 #vcpkg安装路径
 SET(CMAKE_TOOLCHAIN_FILE "F:/vcpkg/scripts/buildsystems/vcpkg.cmake")
@@ -65,6 +65,7 @@ file(GLOB_RECURSE source
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
     "{PROJECT_SOURCE_DIR}/src/*.c"
     )
+    
 add_executable(${PROJECTNAME} ${source})
 #头文件目录
 target_include_directories(${PROJECTNAME} PUBLIC "include")
