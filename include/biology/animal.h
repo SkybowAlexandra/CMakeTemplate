@@ -3,32 +3,47 @@
 #include <concepts>
 #include <type_traits>
 
-
 namespace biology
 {
-template<typename T>
-concept Animal =  requires (T animal)
-{
-    std::is_pointer_v<T>;
-    animal->Speak();
-};
+    class Cat
+    {
+    public:
+        Cat()
+        {
+            std::cout << "Cat Constructor" << std::endl;
+        }
+        ~Cat()
+        {
+            std::cout << "Cat destructor" << std::endl;
+        }
+        void Speak()
+        {
+            std::cout << "Cat Speak" << std::endl;
+        }
+    };
 
-template <Animal T>
-static void Speak(T animal)
-{
-    animal->Speak();
-}
 
-class Dog final
-{
-public:
-    Dog() = default;
-};
+    template <typename T>
+    concept ANIMAL = requires(T t) {
+        std::is_class_v<T>;
+    };
 
-class Cat final
-{
-public:
-    Cat() = default;
-    void Speak() const;
-};
+    template <ANIMAL T>
+    class Animal : public T
+    {
+    public:
+        Animal() : T()
+        {
+            std::cout << "Animal constructor" << std::endl;
+        }
+        virtual ~Animal()
+        {
+            std::cout << "Animal destructor" << std::endl;
+        }
+        void Speak()
+        {
+            T::Speak();
+        }
+    };
+
 }

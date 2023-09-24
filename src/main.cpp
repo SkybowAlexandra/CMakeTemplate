@@ -1,11 +1,14 @@
 #include <iostream>
+#include <memory>
+#include <string>
 #include <biology/animal.h>
+
 using namespace biology;
+
 
 int main(int argc, char *argv[])
 {
-    Cat *cat = new Cat;
-    Speak(cat);
-    delete cat;
-    return 0;
+    std::shared_ptr<Animal<Cat>> cat = std::make_shared<Animal<Cat>>();
+    cat->Speak();
+
 }

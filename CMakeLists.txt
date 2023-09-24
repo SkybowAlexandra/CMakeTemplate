@@ -1,11 +1,11 @@
 #指定Cmake最低版本
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 #编译后执行? 
 set(EXECUTE OFF)
-
+enable_testing()
 #vcpkg安装路径
-SET(CMAKE_TOOLCHAIN_FILE "F:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+SET(CMAKE_TOOLCHAIN_FILE "H:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 #设置C++标准
 set(CMAKE_CXX_STANDARD 20)
@@ -32,8 +32,8 @@ endif()
 #生成的可执行文件名字
 SET(PROJECTNAME "main")
 
-#设置输出文件为debug版本
-set(CMAKE_BUILD_TYPE Release)
+#设置输出文件为Debug版本
+set(CMAKE_BUILD_TYPE Debug)
 #未设置CMAKE_BUILD_TYPE自动设置为Release
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -90,10 +90,14 @@ if (Boost_FOUND)
     link_directories(${Boost_LIBRARY_DIRS})
 endif ()
 target_link_libraries(${PROJECTNAME} PRIVATE ${Boost_LIBRARIES})
+add_test(NAME ${PROJECTNAME}_Test COMMAND ${PROJECTNAME})
 else()
 message("Vcpkg路径未指定")
 endif()
 
+#ctest 支持
+include(CTest)
+enable_testing()
 
 #输出构建信息
 message("项目版本: ${PROJECT_VERSION}")
@@ -108,6 +112,8 @@ message("根项目源码路径: ${CMAKE_CURRENT_SOURCE_DIR}")
 message("根项目的输出路径: ${CMAKE_CURRENT_BINARY_DIR}")
 message("Boost库目录: ${Boost_LIBRARIES}")
 message("Boost库版本: ${Boost_VERSION}")
+
+
 
 if (EXECUTE)
 add_custom_command(TARGET ${PROJECTNAME} POST_BUILD COMMAND ${PROJECTNAME} COMMENT ".....开始执行程序.....")
