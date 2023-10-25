@@ -15,17 +15,12 @@ namespace func
         {
             auto task_pkg = std::make_shared<std::packaged_task<std::invoke_result_t<Func, Args...>()>>(
                 std::bind(function, args...));
-            if (!task_pkg)
-            {
+            if (task_pkg.get() == nullptr)
                 throw std::runtime_error("Failed to create packaged_task");
-                return;
-            }
-            this->f = std::async(std::launch::deferred, [task_pkg]() -> ReturnType
-            {
-           
+
+            this->f = std::async(std::launch::deferred, [task_pkg]() -> ReturnType{
                     (*task_pkg)();
-                    return (*task_pkg).get_future().get(); 
-            });
+                    return (*task_pkg).get_future().get();});
         }
         ReturnType call()
         {
@@ -38,7 +33,6 @@ namespace func
                 f.wait();
             }
         }
-
     private:
         std::future<ReturnType> f;
     };
