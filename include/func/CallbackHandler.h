@@ -22,9 +22,16 @@ namespace func
             }
             this->f = std::async(std::launch::deferred, [task_pkg]() -> ReturnType
             {
-           
+                try
+                {
                     (*task_pkg)();
-                    return (*task_pkg).get_future().get(); 
+                     
+                }
+                catch(const std::exception& e)
+                {
+                    std::cerr << e.what() << '\n';
+                }
+                return (*task_pkg).get_future().get();
             });
         }
         ReturnType call()
