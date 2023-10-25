@@ -11,20 +11,22 @@ namespace func
     {
     public:
         template <typename Func, typename... Args>
-        auto register_func(Func function, Args... args)
+        typename std::conditional_t<std::is_void_v<ReturnType>, void, ReturnType>
+        register_func(Func function, Args... args)
         {
+
             auto task_pkg = std::make_shared<std::packaged_task<std::invoke_result_t<Func, Args...>()>>(
                 std::bind(function, args...));
-
-            if (task_pkg == nullptr)
-            {
-                return -1;
-            }
             this->f = std::async(std::launch::deferred, [task_pkg]() -> ReturnType
-                                 {                      
-                           (*task_pkg)();
-                           return (*task_pkg).get_future().get(); });
-            return 0;
+                                 {
+                                     (*task_pkg)();
+                                     return (*task_pkg).get_future().get(); });
+
+
+
+            if constexpr(std::is_void_v<ReturnType>)
+                return;
+            return typename std::conditional<std::is_void_v<ReturnType>, void, ReturnType>::type{};
         }
         ReturnType call()
         {

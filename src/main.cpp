@@ -13,6 +13,12 @@ T add(T a, T b)
     return a + b;
 }
 
+
+int test()
+{
+    return int{};
+}
+
 int main(int argc, char *argv[])
 {
     Callback<int> c;
@@ -20,12 +26,5 @@ int main(int argc, char *argv[])
     auto ret = c.call();
     std::cout << ret << std::endl;
 
-    c.register_func([](int a, int b)
-                    { std::cout << "a+b: " << a + b << std::endl; return 0; },
-                    5, 3);
-    c.call();
-
-    std::shared_ptr<Animal<Cat>> cat = std::make_shared<Animal<Cat>>();
-    cat->Speak();
     return 0;
 }
