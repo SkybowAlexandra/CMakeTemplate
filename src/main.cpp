@@ -13,10 +13,9 @@ T add(T a, T b)
     return a + b;
 }
 
-
-int test()
+void test()
 {
-    return int{};
+    return void{};
 }
 
 int main(int argc, char *argv[])
@@ -25,6 +24,10 @@ int main(int argc, char *argv[])
     c.register_func(add<int>, 5, 2);
     auto ret = c.call();
     std::cout << ret << std::endl;
+
+    Callback<void> c2;
+    c2.register_func([](int a, int b)->void{std::cout << 2*3 << std::endl;},2,3);
+    c2.call();
 
     return 0;
 }

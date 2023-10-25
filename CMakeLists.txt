@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.5)
 set(EXECUTE OFF)
 enable_testing()
 #vcpkg安装路径
-SET(CMAKE_TOOLCHAIN_FILE "H:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+SET(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 #设置C++标准
 set(CMAKE_CXX_STANDARD 20)
@@ -50,6 +50,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
         message(STATUS "Found CCache: ${CCACHE_PROGRAM}")
         set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_PROGRAM})
         set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_PROGRAM})
+        set_property(GLOBAL PROPERTY USE_FOLDERS ON)
     endif()
 endif()
 
@@ -65,35 +66,37 @@ file(GLOB_RECURSE source
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
     "{PROJECT_SOURCE_DIR}/src/*.c"
     )
-    
 add_executable(${PROJECTNAME} ${source})
+add_test(NAME ${PROJECTNAME}_Test COMMAND ${PROJECTNAME})
+
 #头文件目录
 target_include_directories(${PROJECTNAME} PUBLIC "include")
 
 
+
 if (CMAKE_TOOLCHAIN_FILE)
-#boost库支持
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_STATIC_RUNTIME ON)
-
-if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-windows/include)
-endif()
-if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
-set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/include)
+    message("Vcpkg路径指定: "${CMAKE_TOOLCHAIN_FILE})
+else()
+    message("Vcpkg路径未指定")
 endif()
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-find_package(Boost COMPONENTS system locale thread REQUIRED)#添加需要的包
+find_package(Boost COMPONENTS system locale thread QUIET) #添加需要的包
 if (Boost_FOUND)
+#boost库支持
+#静态链接boost库
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_STATIC_RUNTIME ON)
+    #查找不同平台include 目录
+    if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-windows/include)
+    endif()
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
+    set(Boost_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/x64-linux/include)
+    endif()
     include_directories(${Boost_INCLUDE_DIRS})
     link_directories(${Boost_LIBRARY_DIRS})
+    target_link_libraries(${PROJECTNAME} PRIVATE ${Boost_LIBRARIES})
 endif ()
-target_link_libraries(${PROJECTNAME} PRIVATE ${Boost_LIBRARIES})
-add_test(NAME ${PROJECTNAME}_Test COMMAND ${PROJECTNAME})
-else()
-message("Vcpkg路径未指定")
-endif()
 
 #ctest 支持
 include(CTest)
