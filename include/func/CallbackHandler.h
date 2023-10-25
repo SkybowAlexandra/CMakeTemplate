@@ -17,10 +17,21 @@ namespace func
                 std::bind(function, args...));
             if (task_pkg.get() == nullptr)
                 throw std::runtime_error("Failed to create packaged_task");
-
-            this->f = std::async(std::launch::deferred, [task_pkg]() -> ReturnType{
+                return;
+            }
+            this->f = std::async(std::launch::deferred, [task_pkg]() -> ReturnType
+            {
+                try
+                {
                     (*task_pkg)();
-                    return (*task_pkg).get_future().get();});
+                     
+                }
+                catch(const std::exception& e)
+                {
+                    std::cerr << e.what() << '\n';
+                }
+                return (*task_pkg).get_future().get();
+            });
         }
         ReturnType call()
         {
