@@ -13,10 +13,6 @@ T add(T a, T b)
     return a + b;
 }
 
-void test()
-{
-    return void{};
-}
 
 int main(int argc, char *argv[])
 {
