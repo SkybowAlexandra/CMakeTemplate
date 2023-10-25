@@ -22,7 +22,6 @@ namespace biology
         }
     };
 
-
     template <typename T>
     concept ANIMAL = requires(T t) {
         std::is_class_v<T>;
