@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.5)
 set(EXECUTE OFF)
 enable_testing()
 #vcpkg安装路径
-SET(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+SET(CMAKE_TOOLCHAIN_FILE "F:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 #设置C++标准
 set(CMAKE_CXX_STANDARD 20)
@@ -74,7 +74,7 @@ target_include_directories(${PROJECTNAME} PUBLIC "include")
 
 
 if (CMAKE_TOOLCHAIN_FILE)
-    message("Vcpkg路径指定: "${CMAKE_TOOLCHAIN_FILE})
+    message("Vcpkg路径指定: " ${CMAKE_TOOLCHAIN_FILE})
 else()
     message("Vcpkg路径未指定")
 endif()

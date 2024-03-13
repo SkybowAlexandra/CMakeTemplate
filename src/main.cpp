@@ -24,6 +24,9 @@ int main(int argc, char *argv[])
     Callback<void> c2;
     c2.register_func([](int a, int b)->void{std::cout << 2*3 << std::endl;},2,3);
     c2.call();
+    Animal<Cat> cat;
+    cat.Speak();
+
 
     return 0;
 }
