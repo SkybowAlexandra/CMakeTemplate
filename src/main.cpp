@@ -3,6 +3,7 @@
 #include <string>
 #include <func/CallbackHandler.h>
 #include <biology/animal.h>
+#include <func/Global.h>
 
 using namespace biology;
 using namespace func;
@@ -26,6 +27,10 @@ int main(int argc, char *argv[])
     c2.call();
     Animal<Cat> cat;
     cat.Speak();
+
+    Global<Dog>::New();
+    Global<Dog>::Get()->Speak();
+    Global<Dog>::Delete();
 
 
     return 0;
