@@ -4,9 +4,11 @@
 #include <func/CallbackHandler.h>
 #include <biology/animal.h>
 #include <func/Global.h>
+#include <sqlite3.h>
 
 using namespace biology;
 using namespace func;
+
 
 template <typename T>
 T add(T a, T b)
@@ -17,6 +19,7 @@ T add(T a, T b)
 
 int main(int argc, char *argv[])
 {
+
     Callback<int> c;
     c.register_func(add<int>, 5, 2);
     auto ret = c.call();
