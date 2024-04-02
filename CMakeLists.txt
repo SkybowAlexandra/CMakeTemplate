@@ -75,17 +75,19 @@ function(GenerateDebugFile)
     #配置VSCode工作区模板
     set(VS_CODE_WORKING_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/c_cpp_properties.json.in")
     #设置平台
-    set(PLATFORM "Win32")
+    
     #设置头文件目录
     set(INCLUDEDIRS "\${workspaceFolder}/**")
     set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${workspaceFolder}/include/**")
-    set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${vcpkgRoot}/x64-windows/include/**")
+    set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}/include/**")
 
-    set(WINDOWSSKDVERSION ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION})
+    
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         message("Linux系统.")
-        set(COMPILER "g++")
+        set(PLATFORM "Linux")
+        find_program(CMAKE_CXX_COMPILER NAMES g++ REQUIRED)
+        set(COMPILER "${CMAKE_CXX_COMPILER}")
         set(INTELLISENSEMODE "linux-gcc-x64")
         if(CMAKE_CXX_STANDARD EQUAL 11)
         set(CPP_STANDARD "gnu++11")
@@ -115,6 +117,8 @@ function(GenerateDebugFile)
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         message("Windows系统.")
+        #set(WINDOWSSKDVERSION ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION})
+        set(PLATFORM "Win32")
         set(COMPILER "cl.exe")
         set(INTELLISENSEMODE "windows-msvc-x64")
         if(CMAKE_CXX_STANDARD EQUAL 11)
@@ -143,8 +147,6 @@ function(GenerateDebugFile)
 
     configure_file(${VS_CODE_WORKING_TEMPLATE} 
     "${PROJECT_SOURCE_DIR}/.vscode/c_cpp_properties.json"
-    @PLATFORM
-    @INCLUDEDIRS
     )
 
 endfunction()
