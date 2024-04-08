@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
 				"${workspaceFolder}/include/**",
-				"${vcpkgRoot}/x64-linux/include/**"
+				"${vcpkgRoot}/x64-linux/include"
 
             ],
             "defines": [

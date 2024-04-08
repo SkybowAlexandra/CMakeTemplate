@@ -41,7 +41,7 @@ function(GenerateDebugFile)
     #设置头文件目录
     set(INCLUDEDIRS "\${workspaceFolder}/**")
     set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${workspaceFolder}/include/**")
-    set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}/include/**")
+    set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}/include")
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(PLATFORM "Linux")
