@@ -1,3 +1,7 @@
 # CMakeTemplate
-Vscode下一个Cmake简单的模板,支持Windows和linux,只需设置Cmake中的vcpkg目录就可以自动生成的vscode的调试配置文件,
-linux需要gcc,Windows需要msvc.
+Vscode中使用Cmake简单的模板,支持Windows和Linux.  
+设置CMakeLists.txt中的vcpkg安装路径变量后,执行下列命令.
+```shell
+	cmake -B "build"  
+	cmake --build "build"
+```
