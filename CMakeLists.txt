@@ -158,7 +158,7 @@ function(GenerateDebugFile)
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     set(CONFIG_TYPE "cppvsdbg")
-    set(PROGRAM_NAME "\${workspaceFolder}/build/${CMAKE_BUILD_TYPE}/${PROJECTNAME}")
+    set(PROGRAM_NAME "\${workspaceFolder}/build/${CMAKE_BUILD_TYPE}/${PROJECTNAME}.exe")
     set(WORKSPACE_FOLDER "\${workspaceFolder}/build")
     endif()
 
