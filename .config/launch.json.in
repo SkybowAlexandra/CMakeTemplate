@@ -2,13 +2,13 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "C/C++: cl.exe 生成和调试活动文件",
-        "type": "cppvsdbg",
+        "name": "生成和调试活动文件...",
+        "type": "@CONFIG_TYPE@",
         "request": "launch",
-        "program": "${workspaceFolder}\\build\\Debug\\main.exe",
+        "program": "@PROGRAM_NAME@",
         "args": [],
         "stopAtEntry": false,
-        "cwd": "${workspaceFolder}\\build",
+        "cwd": "@WORKSPACE_FOLDER@",
         "environment": [],
         "externalConsole": false,
         "preLaunchTask": "Build"
