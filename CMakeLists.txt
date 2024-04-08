@@ -7,7 +7,7 @@ set(EXECUTE OFF)
 enable_testing()
 #设置vcpkg安装路径
 
-SET(CMAKE_TOOLCHAIN_FILE "F:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+SET(CMAKE_TOOLCHAIN_FILE "/home/zhao/Software/vcpkg/scripts/buildsystems/vcpkg.cmake")
 #设置输出文件为Debug版本
 set(CMAKE_BUILD_TYPE Debug)
 #生成的可执行文件名字
@@ -73,9 +73,8 @@ file(GLOB_RECURSE source
 
 function(GenerateDebugFile)
     #配置VSCode工作区模板
-    set(VS_CODE_WORKING_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/c_cpp_properties.json.in")
+    set(VSCODE_WORKING_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/c_cpp_properties.json.in")
     #设置平台
-    
     #设置头文件目录
     set(INCLUDEDIRS "\${workspaceFolder}/**")
     set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${workspaceFolder}/include/**")
@@ -144,10 +143,41 @@ function(GenerateDebugFile)
         endif()     
     endif()
 
-
-    configure_file(${VS_CODE_WORKING_TEMPLATE} 
+    configure_file(${VSCODE_WORKING_TEMPLATE} 
     "${PROJECT_SOURCE_DIR}/.vscode/c_cpp_properties.json"
     )
+
+    #配置Vscode调试执行文件
+    set(VSCODE_LAUNCH_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/launch.json.in")
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(CONFIG_TYPE "cppdbg")
+    set(PROGRAM_NAME "\${workspaceFolder}/build/${PROJECTNAME}")
+    set(WORKSPACE_FOLDER "\${workspaceFolder}/build")
+    endif()
+
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+
+    set(CONFIG_TYPE "cppvsdbg")
+    set(PROGRAM_NAME "\${workspaceFolder}/build/${CMAKE_BUILD_TYPE}/${PROJECTNAME}")
+    set(WORKSPACE_FOLDER "\${workspaceFolder}/build")
+    endif()
+
+
+    configure_file(${VSCODE_LAUNCH_TEMPLATE}  "${PROJECT_SOURCE_DIR}/.vscode/launch.json" )
+
+
+
+
+
+
+
+    #配置Vscode调试任务
+    set(VSCODE_TASKS_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/tasks.json.in")
+
+
+
+
+
 
 endfunction()
 
@@ -173,7 +203,7 @@ else()
     message(FATAL_ERROR "Vcpkg路径未指定")
 endif()
 #添加需要的boost包
-find_package(Boost COMPONENTS system locale thread QUIET)
+find_package(Boost)
 if (Boost_FOUND)
     #boost库支持
     #静态链接boost库

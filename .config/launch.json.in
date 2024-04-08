@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "生成和调试活动文件...",
+        "type": "@CONFIG_TYPE@",
+        "request": "launch",
+        "program": "@PROGRAM_NAME@",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "@WORKSPACE_FOLDER@",
+        "environment": [],
+        "externalConsole": false,
+        "preLaunchTask": "Build"
+      }
+    ]
+  }
