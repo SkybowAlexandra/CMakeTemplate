@@ -165,16 +165,10 @@ function(GenerateDebugFile)
 
     configure_file(${VSCODE_LAUNCH_TEMPLATE}  "${PROJECT_SOURCE_DIR}/.vscode/launch.json" )
 
-
-
-
-
-
-
     #配置Vscode调试任务
     set(VSCODE_TASKS_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/tasks.json.in")
-
-
+    set(WORKSPACE_FOLDER "\${workspaceFolder}")
+    configure_file(${VSCODE_TASKS_TEMPLATE}  "${PROJECT_SOURCE_DIR}/.vscode/tasks.json" )
 
 
 
