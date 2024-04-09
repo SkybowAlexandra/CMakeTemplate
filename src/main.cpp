@@ -4,6 +4,7 @@
 #include <func/CallbackHandler.h>
 #include <biology/animal.h>
 #include <func/Global.h>
+import print_hello;
 
 using namespace biology;
 using namespace func;
@@ -31,7 +32,7 @@ int main(int argc, char *argv[])
     Global<Dog>::New();
     Global<Dog>::Get()->Speak();
     Global<Dog>::Delete();
-
+    HelloWorld();
 
     return 0;
 }

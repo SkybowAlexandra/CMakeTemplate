@@ -183,12 +183,25 @@ file(GLOB_RECURSE source
     )
 
 
+#模块支持
+if (CMAKE_CXX_STANDARD > 20)
+file(GLOB_RECURSE FAST_MODULES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.ixx
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.cppm)
+endif()
+
 #生成目标
 add_executable(${PROJECTNAME} ${source})
 #生成ctest
 add_test(NAME ${PROJECTNAME}_Test COMMAND ${PROJECTNAME})
 #头文件目录
 target_include_directories(${PROJECTNAME} PUBLIC "include")
+
+#模块支持
+target_sources(${PROJECTNAME} PUBLIC ${FAST_MODULES})
+
+
 
 #添加需要的boost包
 find_package(Boost)
