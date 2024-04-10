@@ -1,9 +1,9 @@
 module;
-#include <iostream>
+import <iostream>;
 
 export module print_hello;
 
 export void HelloWorld() 
 {
-    puts("Hello, world!\n");
+    std::cout << "Hello, world!\n";
 }

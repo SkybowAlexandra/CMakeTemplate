@@ -18,7 +18,7 @@ T add(T a, T b)
 }
 
 
-int main(int argc, char *argv[])
+int main()
 {
     Callback<int> c;
     c.register_func(add<int>, 5, 2);

@@ -177,10 +177,19 @@ endif()
 
 #添加GCC编译器选项
 if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
-message("G++ 编译器")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+    message("G++ 编译器")
+    add_compile_options(-Wall)
 endif()
+
+
+
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    message("MSVC 编译器")
+    add_compile_options(/W4)
+endif()
+
+
 
 #cpp文件目录
 file(GLOB_RECURSE source 
