@@ -33,6 +33,12 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 #设置为ON表示启动GCC特性，OFF关闭GCC特性,只使用标准C
 set(CMAKE_C_EXTENSIONS OFF)
+
+
+
+
+
+
 #生成调试配置任务函数
 function(GenerateDebugFile)
     #配置VSCode工作区模板
@@ -184,12 +190,11 @@ file(GLOB_RECURSE source
 
 
 #模块支持
-if (CMAKE_CXX_STANDARD > 20)
+
 file(GLOB_RECURSE FAST_MODULES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.ixx
         ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.cxx
         ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.cppm)
-endif()
 
 #生成目标
 add_executable(${PROJECTNAME} ${source})
@@ -222,7 +227,9 @@ if (Boost_FOUND)
     target_link_libraries(${PROJECTNAME} PRIVATE ${Boost_LIBRARIES})
 endif ()
 
-#==============添加要链接的库=========================
+#==============添加要链接的vcpkg 第三方库=========================
+
+
 
 
 #=====================================================
