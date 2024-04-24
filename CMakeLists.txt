@@ -2,12 +2,12 @@
 cmake_minimum_required(VERSION 3.5)
 
 #编译后执行? 
-set(EXECUTE ON)
+set(EXECUTE OFF)
 #开启ctest测试
 enable_testing()
 #设置vcpkg安装路径
 
-SET(CMAKE_TOOLCHAIN_FILE "/home/zhao/Software/vcpkg/scripts/buildsystems/vcpkg.cmake")
+SET(CMAKE_TOOLCHAIN_FILE "G:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 #设置输出文件为Debug版本
 set(CMAKE_BUILD_TYPE Debug)
 #生成的可执行文件名字
@@ -256,6 +256,5 @@ GenerateDebugFile()
 
 if (EXECUTE)
 add_custom_command(TARGET ${PROJECTNAME} POST_BUILD COMMAND ${PROJECTNAME} COMMENT ".....开始执行程序.....")
-add_custom_target(run ${PROJECTNAME})
 endif()
 
