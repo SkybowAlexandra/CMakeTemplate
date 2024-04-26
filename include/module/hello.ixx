@@ -1,5 +1,5 @@
 module;
-import <iostream>;
+#include <iostream>
 
 export module print_hello;
 

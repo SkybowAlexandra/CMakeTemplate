@@ -3,10 +3,8 @@ cmake_minimum_required(VERSION 3.5)
 
 #编译后执行? 
 set(EXECUTE OFF)
-#开启ctest测试
-enable_testing()
-#设置vcpkg安装路径
 
+#设置vcpkg安装路径
 SET(CMAKE_TOOLCHAIN_FILE "G:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 #设置输出文件为Debug版本
 set(CMAKE_BUILD_TYPE Debug)
@@ -18,24 +16,63 @@ project(TEMPLATE LANGUAGES C CXX VERSION 0.0.1)
 #设置Cmake生成器
 #set(CMAKE_GENERATOR "ninja")
 
-
-
 #设置C++标准
 set(CMAKE_CXX_STANDARD 20)
 #检查编译器是否支持设置的标准
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#设置为ON表示启动GCC特性，OFF关闭GCC特性,只使用标准C++
+#设置为ON表示启动编译器扩展语法，OFF关闭编译器扩展语法,只使用标准C++
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 #设置C标准
 set(CMAKE_C_STANDARD 17)
 #检查编译器是否支持设置的标准
 set(CMAKE_C_STANDARD_REQUIRED ON)
-#设置为ON表示启动GCC特性，OFF关闭GCC特性,只使用标准C
+#设置为ON表示启动编译器扩展语法，OFF关闭编译器扩展语法,只使用标准C
 set(CMAKE_C_EXTENSIONS OFF)
 
 
+function(GenWin32)
+    if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set(platform "windows-msvc-x64")
+    endif()
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
+    set(platform "windows-gcc-x64")
+    endif()
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(platform "windows-Clang-x64")
+    endif()
+    file(WRITE test.json 
+    "{
+        \"configurations\": [ 
+            {
+                \"name\": \"Win32\",
+                \"includePath\": [
+                    \"\${workspaceFolder}/**\",
+                    \"\${workspaceFolder}/include/**\",
+                    \"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}/include\",
+                    \"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}-static/include\"
+                ],
+                \"defines\": [
+                    \"_DEBUG\",
+                    \"UNICODE\",
+                    \"_UNICODE\"
+                ],
+                \"compilerPath\": \"cl.exe\",
+                \"cStandard\": \"c${CMAKE_C_STANDARD}\",
+                \"cppStandard\": \"c++${CMAKE_CXX_STANDARD}\",
+              
+                \"intelliSenseMode\": \"${platform}\",
+                \"configurationProvider\": \"ms-vscode.cmake-tools\"
+            }
+        ],
+        \"version\": 4
+    }
+    ")
 
+
+endfunction()
+
+GenWin32()
 
 
 
@@ -48,6 +85,9 @@ function(GenerateDebugFile)
     set(INCLUDEDIRS "\${workspaceFolder}/**")
     set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${workspaceFolder}/include/**")
     set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}/include")
+    set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}-static/include")
+    
+ 
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(PLATFORM "Linux")
@@ -160,12 +200,6 @@ if (PROJECT_BINARY_DIR STREQUAL PROJECT_SOURCE_DIR)
     message(WARNING "CMake 的二进制目录不能与源代码目录相同!")
 endif()
 
-
-#取消winodws.h里的MIN MAX宏,不然无法使用std::min std::max
-if (WIN32)
-    add_definitions(-DNOMINMAX -D_USE_MATH_DEFINES)
-endif()
-
 #开启ccache
 find_program(CCACHE_PROGRAM ccache)
 if (CCACHE_PROGRAM)
@@ -174,46 +208,34 @@ if (CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 endif()
 
+#开启ctest测试
+include(CTest)
+enable_testing()
 
-#添加GCC编译器选项
-if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
-    message("G++ 编译器")
-    add_compile_options(-Wall)
-endif()
+#增加编译器选项开启所有编译警告
+add_compile_options(
+     #MSVC编译器
+    "$<$<COMPILE_LANG_AND_ID:C,CXX,MSVC>:$<BUILD_INTERFACE:/W4>>"
+    # GCC编译器
+    "$<$<COMPILE_LANG_AND_ID:C,CXX,ARMclang,AppleClang,Clang,GNU,LCC>:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused>>"
+)
 
+#CPP源文件目录
+aux_source_directory(${PROJECT_SOURCE_DIR}/src SOURCE)
+#模块文件目录
+aux_source_directory(${PROJECT_SOURCE_DIR}/include/module MODULES)
 
-
-
-if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    message("MSVC 编译器")
-    add_compile_options(/W4)
-endif()
-
-
-
-#cpp文件目录
-file(GLOB_RECURSE source 
-    "${PROJECT_SOURCE_DIR}/src/*.cpp"
-    "{PROJECT_SOURCE_DIR}/src/*.c"
-    )
-
-
-#模块支持
-
-file(GLOB_RECURSE FAST_MODULES
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.ixx
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.cxx
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/module/*.cppm)
 
 #生成目标
-add_executable(${PROJECTNAME} ${source})
-#生成ctest
+add_executable(${PROJECTNAME} ${SOURCE} ${MODULES})
+#添加ctest
 add_test(NAME ${PROJECTNAME}_Test COMMAND ${PROJECTNAME})
+
+
 #头文件目录
 target_include_directories(${PROJECTNAME} PUBLIC "include")
 
-#模块支持
-target_sources(${PROJECTNAME} PUBLIC ${FAST_MODULES})
+
 
 
 
@@ -246,9 +268,6 @@ endif ()
 
 
 
-#ctest 支持
-include(CTest)
-enable_testing()
 
 
 GenerateDebugFile()
