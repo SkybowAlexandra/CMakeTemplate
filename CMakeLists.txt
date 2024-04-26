@@ -14,7 +14,7 @@ SET(PROJECTNAME "main")
 project(TEMPLATE LANGUAGES C CXX VERSION 0.0.1)
 
 #设置Cmake生成器
-#set(CMAKE_GENERATOR "ninja")
+#set(CMAKE_GENERATOR "Ninja")
 
 #设置C++标准
 set(CMAKE_CXX_STANDARD 20)
