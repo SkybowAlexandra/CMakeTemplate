@@ -7,7 +7,7 @@
 
 
 
-import print_hello;
+//import print_hello;
 
 using namespace biology;
 using namespace func;
@@ -37,6 +37,6 @@ int main()
     Global<Dog>::New();
     Global<Dog>::Get()->Speak();
     Global<Dog>::Delete();
-    HelloWorld();
+    //HelloWorld();
     return 0;
 }

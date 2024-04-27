@@ -1,11 +1,11 @@
 #指定Cmake最低版本
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.28)
 
 #编译后执行? 
 set(EXECUTE OFF)
 
 #设置vcpkg安装路径
-SET(CMAKE_TOOLCHAIN_FILE "G:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+SET(CMAKE_TOOLCHAIN_FILE "/home/zhao/Software/vcpkg/scripts/buildsystems/vcpkg.cmake")
 #设置输出文件为Debug版本
 set(CMAKE_BUILD_TYPE Debug)
 #生成的可执行文件名字
@@ -130,25 +130,20 @@ function(GenWin32DebugFile)
             }
         ]
     }
-    
-    
-    
     ")
-
-
 
 
 endfunction()
 
 
 function(GenLinuxDebugFile)
-if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 set(platform "linux-gcc-x64")
 endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 set(platform "linux-Clang-x64")
 endif()
-file(WRITE linuxdebug.json
+file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/c_cpp_properties.json"
 "{
     \"configurations\": [
         {
@@ -156,11 +151,10 @@ file(WRITE linuxdebug.json
             \"includePath\": [
                 \"\${workspaceFolder}/**\",
                 \"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}/include\",
-                \"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}-static/include\",
                 \"\${workspaceFolder}/include\"
             ],
             \"defines\": [],
-            \"compilerPath\": \"/usr/local/bin/g++\",
+            \"compilerPath\": \"/usr/bin/g++\",
             \"cStandard\": \"gnu${CMAKE_C_STANDARD}\",
             \"cppStandard\": \"gnu++${CMAKE_CXX_STANDARD}\",
             \"intelliSenseMode\": \"${platform}\",
@@ -170,9 +164,81 @@ file(WRITE linuxdebug.json
     \"version\": 4
 }
 ")
+file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/launch.json"
+"{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    \"version\": \"0.2.0\",
+    \"configurations\": [
+        {
+            \"name\": \"g++ - 生成和调试活动文件\",
+            \"type\": \"cppdbg\",
+            \"request\": \"launch\",
+            \"program\": \"\${workspaceFolder}/build/${PROJECTNAME}\",
+            \"args\": [],
+            \"stopAtEntry\": false,
+            \"cwd\": \"\${workspaceFolder}/build\",
+            \"environment\": [],
+            \"externalConsole\": false,
+            \"MIMode\": \"gdb\",
+            \"setupCommands\": [
+                {
+                    \"description\": \"为 gdb 启用整齐打印\",
+                    \"text\": \"-enable-pretty-printing\",
+                    \"ignoreFailures\": true
+                }
+            ],
+            //调试之前执行Build任务
+            \"preLaunchTask\": \"Build\",
+            \"miDebuggerPath\": \"gdb\"
+        }
+    ]
+}
+")
 
-
-
+file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/tasks.json" "
+{
+    \"version\": \"2.0.0\",
+    \"options\": {
+        \"cwd\": \"${workspaceFolder}\"
+    },
+    \"tasks\":[
+        {
+            \"type\": \"shell\",
+            \"label\": \"cmake\",
+            \"command\": \"cmake\",
+            \"args\": [
+                \"-B\",
+                \"build\"
+            ]
+        },
+        {
+            \"options\": {
+                \"cwd\": \"\${workspaceFolder}\"
+            },
+            \"label\": \"make\",
+            \"group\": {
+                \"kind\": \"build\",
+                \"isDefault\": true
+            },
+            \"command\": \"cmake\",
+            \"args\": [
+                \"--build\",
+                \"build\"
+            ]
+        },
+        {
+            \"label\": \"Build\",
+            \"dependsOrder\":\"sequence\",
+            \"dependsOn\":[
+                \"cmake\",
+                \"make\"
+            ]
+        }
+    ]
+}
+")
 
 
 
@@ -185,8 +251,8 @@ endfunction(GenLinuxDebugFile)
 
 
 
-GenWin32DebugFile()
-#GenLinuxDebugFile()
+#GenWin32DebugFile()
+GenLinuxDebugFile()
 
 
 #生成调试配置任务函数
@@ -330,8 +396,10 @@ add_compile_options(
      #MSVC编译器
     "$<$<COMPILE_LANG_AND_ID:C,CXX,MSVC>:$<BUILD_INTERFACE:/W4>>"
     # GCC编译器
-    "$<$<COMPILE_LANG_AND_ID:C,CXX,ARMclang,AppleClang,Clang,GNU,LCC>:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused>>"
+    "$<$<COMPILE_LANG_AND_ID:C,CXX,ARMclang,AppleClang,Clang,GNU,LCC>:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused;-fmodules-ts>>"
 )
+
+add_compile_options(-fmodules-ts)
 
 #CPP源文件目录
 aux_source_directory(${PROJECT_SOURCE_DIR}/src SOURCE)
@@ -340,16 +408,15 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/include/module MODULES)
 
 
 #生成目标
-add_executable(${PROJECTNAME} ${SOURCE} ${MODULES})
+add_executable(${PROJECTNAME} ${SOURCE} )
+
+
 #添加ctest
 add_test(NAME ${PROJECTNAME}_Test COMMAND ${PROJECTNAME})
 
 
 #头文件目录
 target_include_directories(${PROJECTNAME} PUBLIC "include")
-
-
-
 
 
 #添加需要的boost包
