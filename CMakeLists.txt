@@ -31,18 +31,20 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
 
-function(GenWin32)
+function(GenWin32DebugFile)
     if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(platform "windows-msvc-x64")
+    set(LaunchType "cppvsdbg")
     endif()
     if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
     set(platform "windows-gcc-x64")
     endif()
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(platform "windows-Clang-x64")
+    set(LaunchType "cppdbg")
     endif()
-    file(WRITE test.json 
-    "{
+    file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/c_cpp_properties.json" "
+    {
         \"configurations\": [ 
             {
                 \"name\": \"Win32\",
@@ -68,12 +70,123 @@ function(GenWin32)
         \"version\": 4
     }
     ")
+    file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/launch.json" "
+    {
+        \"version\": \"0.2.0\",
+        \"configurations\": [
+          {
+            \"name\": \"生成和调试活动文件...\",
+            \"type\": \"${LaunchType}\",
+            \"request\": \"launch\",
+            \"program\": \"\${workspaceFolder}/build/${CMAKE_BUILD_TYPE}/${PROJECTNAME}\",
+            \"args\": [],
+            \"stopAtEntry\": false,
+            \"cwd\": \"\${workspaceFolder}/build\",
+            \"environment\": [],
+            \"externalConsole\": false,
+            \"preLaunchTask\": \"Build\"
+          }
+        ]
+    }
+    ")
+    file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/tasks.json" "
+    {
+        \"version\": \"2.0.0\",
+        \"options\": {
+            \"cwd\": \"${workspaceFolder}\"
+        },
+        \"tasks\":[
+            {
+                \"type\": \"shell\",
+                \"label\": \"cmake\",
+                \"command\": \"cmake\",
+                \"args\": [
+                    \"-B\",
+                    \"build\"
+                ]
+            },
+            {
+                \"options\": {
+                    \"cwd\": \"\${workspaceFolder}\"
+                },
+                \"label\": \"make\",
+                \"group\": {
+                    \"kind\": \"build\",
+                    \"isDefault\": true
+                },
+                \"command\": \"cmake\",
+                \"args\": [
+                    \"--build\",
+                    \"build\"
+                ]
+            },
+            {
+                \"label\": \"Build\",
+                \"dependsOrder\":\"sequence\",
+                \"dependsOn\":[
+                    \"cmake\",
+                    \"make\"
+                ]
+            }
+        ]
+    }
+    
+    
+    
+    ")
+
+
 
 
 endfunction()
 
-GenWin32()
 
+function(GenLinuxDebugFile)
+if (CMAKE_CXX_COMPILER_ID MATCHES "GUN")
+set(platform "linux-gcc-x64")
+endif()
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+set(platform "linux-Clang-x64")
+endif()
+file(WRITE linuxdebug.json
+"{
+    \"configurations\": [
+        {
+            \"name\": \"Linux\",
+            \"includePath\": [
+                \"\${workspaceFolder}/**\",
+                \"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}/include\",
+                \"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}-static/include\",
+                \"\${workspaceFolder}/include\"
+            ],
+            \"defines\": [],
+            \"compilerPath\": \"/usr/local/bin/g++\",
+            \"cStandard\": \"gnu${CMAKE_C_STANDARD}\",
+            \"cppStandard\": \"gnu++${CMAKE_CXX_STANDARD}\",
+            \"intelliSenseMode\": \"${platform}\",
+            \"configurationProvider\": \"ms-vscode.cmake-tools\"
+        }
+    ],
+    \"version\": 4
+}
+")
+
+
+
+
+
+
+    
+endfunction(GenLinuxDebugFile)
+
+
+
+
+
+
+
+GenWin32DebugFile()
+#GenLinuxDebugFile()
 
 
 #生成调试配置任务函数
@@ -270,7 +383,7 @@ endif ()
 
 
 
-GenerateDebugFile()
+#GenerateDebugFile()
 #DebugMsg()
 
 if (EXECUTE)
