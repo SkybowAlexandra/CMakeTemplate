@@ -244,12 +244,15 @@ endfunction(GenLinuxDebugFile)
 
 
 
-
-
-
-
-#GenWin32DebugFile()
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+GenWin32DebugFile()
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 GenLinuxDebugFile()
+else()
+    message(WARNING "非Windows或者Linux")
+endif()
+
+
 
 
 
@@ -292,7 +295,7 @@ endif()
 include(CTest)
 enable_testing()
 
-#增加编译器选项开启所有编译警告
+#增加编译器选项开启所有编译警告和gcc模块支持
 add_compile_options(
      #MSVC编译器
     "$<$<COMPILE_LANG_AND_ID:C,CXX,MSVC>:$<BUILD_INTERFACE:/W4>>"
@@ -300,12 +303,11 @@ add_compile_options(
     "$<$<COMPILE_LANG_AND_ID:C,CXX,ARMclang,AppleClang,Clang,GNU,LCC>:$<BUILD_INTERFACE:-Wall;-Wextra;-Wshadow;-Wformat=2;-Wunused;-fmodules-ts>>"
 )
 
-add_compile_options(-fmodules-ts)
 
 #CPP源文件目录
 aux_source_directory(${PROJECT_SOURCE_DIR}/src SOURCE)
 #模块文件目录
-aux_source_directory(${PROJECT_SOURCE_DIR}/include/module MODULES)
+#aux_source_directory(${PROJECT_SOURCE_DIR}/include/module MODULES)
 
 
 #生成目标
