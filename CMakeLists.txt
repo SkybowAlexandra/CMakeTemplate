@@ -240,9 +240,6 @@ file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/tasks.json" "
 }
 ")
 
-
-
-    
 endfunction(GenLinuxDebugFile)
 
 
@@ -255,103 +252,7 @@ endfunction(GenLinuxDebugFile)
 GenLinuxDebugFile()
 
 
-#生成调试配置任务函数
-function(GenerateDebugFile)
-    #配置VSCode工作区模板
-    set(VSCODE_WORKING_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/c_cpp_properties.json.in")
-    #设置平台
-    #设置头文件目录
-    set(INCLUDEDIRS "\${workspaceFolder}/**")
-    set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${workspaceFolder}/include/**")
-    set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}/include")
-    set(INCLUDEDIRS "${INCLUDEDIRS}\",\n\t\t\t\t\"\${vcpkgRoot}/${VCPKG_TARGET_TRIPLET}-static/include")
-    
- 
 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(PLATFORM "Linux")
-        find_program(CMAKE_CXX_COMPILER NAMES g++ REQUIRED)
-        set(COMPILER "${CMAKE_CXX_COMPILER}")
-        set(INTELLISENSEMODE "linux-gcc-x64")
-        if(CMAKE_CXX_STANDARD EQUAL 11)
-        set(CPP_STANDARD "gnu++11")
-    elseif(CMAKE_CXX_STANDARD EQUAL 14)
-        set(CPP_STANDARD "gnu++14")
-    elseif(CMAKE_CXX_STANDARD EQUAL 17)
-        set(CPP_STANDARD "gnu++17")
-    elseif(CMAKE_CXX_STANDARD EQUAL 20)
-        set(CPP_STANDARD "gnu++20")
-    elseif(CMAKE_CXX_STANDARD EQUAL 23)
-        set(CPP_STANDARD "gnu++23")
-    else()
-        message(FATAL_ERROR "未知的C++标准")
-        return()
-    endif()
-    if(CMAKE_C_STANDARD EQUAL 11)
-        set(C_STANDARD "gnu11")
-    elseif(CMAKE_C_STANDARD EQUAL 17)
-        set(C_STANDARD "gnu17")
-    elseif(CMAKE_C_STANDARD EQUAL 23)
-        set(C_STANDARD "gnu23")
-    else()
-        message(FATAL_ERROR "未知的C标准")
-    endif()     
-    endif()
-    
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        #set(WINDOWSSKDVERSION ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION})
-        set(PLATFORM "Win32")
-        set(COMPILER "cl.exe")
-        set(INTELLISENSEMODE "windows-msvc-x64")
-        if(CMAKE_CXX_STANDARD EQUAL 11)
-            set(CPP_STANDARD "c++11")
-        elseif(CMAKE_CXX_STANDARD EQUAL 14)
-            set(CPP_STANDARD "c++14")
-        elseif(CMAKE_CXX_STANDARD EQUAL 17)
-            set(CPP_STANDARD "c++17")
-        elseif(CMAKE_CXX_STANDARD EQUAL 20)
-            set(CPP_STANDARD "c++20")
-        elseif(CMAKE_CXX_STANDARD EQUAL 23)
-            set(CPP_STANDARD "c++23")
-        else()
-            message(FATAL_ERROR "未知的C++标准")
-            return()
-        endif()
-        if(CMAKE_C_STANDARD EQUAL 11)
-            set(C_STANDARD "c11")
-        elseif(CMAKE_C_STANDARD EQUAL 17)
-            set(C_STANDARD "c17")
-        else()
-            message(FATAL_ERROR "未知的C标准")
-        endif()     
-    endif()
-
-    configure_file(${VSCODE_WORKING_TEMPLATE} 
-    "${PROJECT_SOURCE_DIR}/.vscode/c_cpp_properties.json"
-    )
-
-    #配置Vscode调试执行文件
-    set(VSCODE_LAUNCH_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/launch.json.in")
-    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(CONFIG_TYPE "cppdbg")
-    set(PROGRAM_NAME "\${workspaceFolder}/build/${PROJECTNAME}")
-    set(WORKSPACE_FOLDER "\${workspaceFolder}/build")
-    endif()
-
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-
-    set(CONFIG_TYPE "cppvsdbg")
-    set(PROGRAM_NAME "\${workspaceFolder}/build/${CMAKE_BUILD_TYPE}/${PROJECTNAME}.exe")
-    set(WORKSPACE_FOLDER "\${workspaceFolder}/build")
-    endif()
-
-    configure_file(${VSCODE_LAUNCH_TEMPLATE}  "${PROJECT_SOURCE_DIR}/.vscode/launch.json" )
-    #配置Vscode调试任务
-    set(VSCODE_TASKS_TEMPLATE "${PROJECT_SOURCE_DIR}/.config/tasks.json.in")
-    set(WORKSPACE_FOLDER "\${workspaceFolder}")
-    configure_file(${VSCODE_TASKS_TEMPLATE}  "${PROJECT_SOURCE_DIR}/.vscode/tasks.json" )
-
-endfunction()
 #调试信息函数
 function(DebugMsg)
     message("当前操作系统:${CMAKE_SYSTEM_NAME}")
