@@ -37,6 +37,11 @@ int main()
     Global<Dog>::New();
     Global<Dog>::Get()->Speak();
     Global<Dog>::Delete();
+    
+    auto dog1 = factory<std::shared_ptr,Dog>(); 
+    dog1->Speak();
+
+
     //HelloWorld();
     return 0;
 }

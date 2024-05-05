@@ -4,9 +4,28 @@
 #include <type_traits>
 #include <future>
 #include <memory>
-
+#include <type_traits>
 namespace func
 {
+
+    template <template <typename> typename Ptr, typename Cls, typename... Arg>
+    Ptr<Cls> factory(Arg &&...args)
+    {
+        if constexpr (std::is_same_v<Ptr<Cls>, std::shared_ptr<Cls>>)
+        {
+            return std::make_shared<Cls>(std::forward<Arg>(args)...);
+        }
+        if constexpr (std::is_same_v<Ptr<Cls>, std::unique_ptr<Cls>>)
+        {
+            return std::make_unique<Cls>(std::forward<Arg>(args)...);
+        }
+        if constexpr (std::is_same_v<Ptr<Cls>, std::weak_ptr<Cls>>)
+        {
+            return std::weak_ptr<Cls>(std::forward<Arg>(args)...);
+        }
+        return nullptr;
+    }
+
     template <typename ReturnType = void>
     class Callback
     {
@@ -19,7 +38,7 @@ namespace func
             if (task_pkg.get() == nullptr)
                 throw std::runtime_error("Failed to create packaged_task");
             this->f = std::async(std::launch::deferred, [task_pkg]() -> ReturnType
-            {
+                                 {
                 try
                 {
                     (*task_pkg)();
@@ -28,8 +47,7 @@ namespace func
                 {
                     std::cerr << e.what() << '\n';
                 }
-                return (*task_pkg).get_future().get();
-            });
+                return (*task_pkg).get_future().get(); });
         }
         ReturnType call()
         {
@@ -42,6 +60,7 @@ namespace func
                 f.wait();
             }
         }
+
     private:
         std::future<ReturnType> f;
     };
