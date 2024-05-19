@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.28)
 set(EXECUTE OFF)
 
 #设置vcpkg安装路径
-SET(CMAKE_TOOLCHAIN_FILE "/home/zhao/Software/vcpkg/scripts/buildsystems/vcpkg.cmake")
+SET(CMAKE_TOOLCHAIN_FILE "G:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 #设置输出文件为Debug版本
 set(CMAKE_BUILD_TYPE Debug)
 #生成的可执行文件名字
@@ -102,7 +102,8 @@ function(GenWin32DebugFile)
                 \"command\": \"cmake\",
                 \"args\": [
                     \"-B\",
-                    \"build\"
+                    \"build\",
+                    \"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}\",
                 ]
             },
             {
@@ -117,7 +118,9 @@ function(GenWin32DebugFile)
                 \"command\": \"cmake\",
                 \"args\": [
                     \"--build\",
-                    \"build\"
+                    \"build\",
+					\"--config\",
+					\"${CMAKE_BUILD_TYPE}\",
                 ]
             },
             {
@@ -210,7 +213,8 @@ file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/tasks.json" "
             \"command\": \"cmake\",
             \"args\": [
                 \"-B\",
-                \"build\"
+                \"build\",
+                \"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}\"
             ]
         },
         {
@@ -225,7 +229,9 @@ file(WRITE "${PROJECT_SOURCE_DIR}/.vscode/tasks.json" "
             \"command\": \"cmake\",
             \"args\": [
                 \"--build\",
-                \"build\"
+                \"build\",
+                \"--config\",
+                \"${CMAKE_BUILD_TYPE}\"
             ]
         },
         {
