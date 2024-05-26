@@ -5,38 +5,6 @@
 
 namespace biology
 {
-    class Cat
-    {
-    public:
-        Cat()
-        {
-            std::cout << "Cat Constructor" << std::endl;
-        }
-        ~Cat()
-        {
-            std::cout << "Cat destructor" << std::endl;
-        }
-        void Speak()
-        {
-            std::cout << "Cat Speak" << std::endl;
-        }
-    };
-    class Dog
-    {
-    public:
-        Dog()
-        {
-            std::cout << "Dog Constructor" << std::endl;
-        }
-        ~Dog()
-        {
-            std::cout << "Dog destructor" << std::endl;
-        }
-        void Speak()
-        {
-            std::cout << "Dog Speak" << std::endl;
-        }
-    };
     template <typename T>
     concept ANIMAL = requires(T t) {
         std::is_class_v<T>;

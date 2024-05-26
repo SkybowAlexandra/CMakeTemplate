@@ -8,23 +8,7 @@
 namespace func
 {
 
-    template <template <typename> typename Ptr, typename Cls, typename... Arg>
-    Ptr<Cls> factory(Arg &&...args)
-    {
-        if constexpr (std::is_same_v<Ptr<Cls>, std::shared_ptr<Cls>>)
-        {
-            return std::make_shared<Cls>(std::forward<Arg>(args)...);
-        }
-        if constexpr (std::is_same_v<Ptr<Cls>, std::unique_ptr<Cls>>)
-        {
-            return std::make_unique<Cls>(std::forward<Arg>(args)...);
-        }
-        if constexpr (std::is_same_v<Ptr<Cls>, std::weak_ptr<Cls>>)
-        {
-            return std::weak_ptr<Cls>(std::forward<Arg>(args)...);
-        }
-        return nullptr;
-    }
+
 
     template <typename ReturnType = void>
     class Callback
