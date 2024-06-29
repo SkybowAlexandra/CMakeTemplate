@@ -4,7 +4,7 @@
 #include <func/CallbackHandler.h>
 #include <biology/animal.h>
 #include <func/Global.h>
-#include <func/Factory.h>
+
 
 // import print_hello;
 
@@ -71,10 +71,6 @@ int main()
     Global<Dog>::New();
     Global<Dog>::Get()->Speak();
     Global<Dog>::Delete();
-
-    /*π§≥ß¿‡≤‚ ‘*/
-    auto c3 = Factory<Cat>::Create();
-    c3->Speak();
 
     return 0;
 }
